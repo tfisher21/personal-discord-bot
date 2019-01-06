@@ -12,14 +12,21 @@ const T = new Twit({
   access_token_secret: process.env.ACCESS_TOKEN_SECRET_KEY
 });
 
+let aocChannel = "";
+
 client.once("ready", () => {
   console.log("Ready!");
+
+  aocChannel = client.channels.get("530851329720057857");
+  // console.log(aocChannel.id);
+  // aocChannel.send("Testing");
 });
 
 client.on("message", message => {
   if (message.content === "!ping") {
     message.channel.send("Pong.");
     // message.channel.send(message.author.bot);
+    console.log(message.channel.id);
   }
   if (message.content === "!marx") {
     message.channel.send(
@@ -31,14 +38,21 @@ client.on("message", message => {
 // @AOC Twitter Embed
 const AOC = "138203134";
 const tfisher21 = "14386881";
-const chicagobears = "47964412";
+const metaphorminute = "575930104";
 const stream = T.stream("statuses/filter", {
-  follow: chicagobears,
-  filter_level: "medium"
+  follow: AOC
+  // filter_level: "low"
 });
 
 stream.on("tweet", tweet => {
-  console.log(tweet);
+  if (tweet.user.id_str === AOC) {
+    console.log(tweet);
+    aocChannel
+      .send("https://twitter.com/AOC/status/" + tweet.id_str)
+      .catch(errors => {
+        console.log(errors);
+      });
+  }
 });
 
 client.login(process.env.BOT_TOKEN);
